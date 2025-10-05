@@ -1,0 +1,45 @@
+
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Coverage & build
+coverage/
+dist/
+build/
+.cache/
+
+# Docker
+*.tar
+docker-compose.override.yml
+
+# GitHub workflow temp
+.github/workflows/*.tmp
+
+# Optional lock files
+package-lock.json
+yarn.lock

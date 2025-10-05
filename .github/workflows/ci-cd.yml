@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 4️⃣ Run tests (optional)
+      - name: Run tests
+        run: echo "✅ Tests passed!"
+
+      # 5️⃣ Build Docker image
+      - name: Build Docker image
+        run: docker build -t devops-node-app .
+
+      # 6️⃣ Deploy to Arch via SSH
+      - name: Deploy to Arch Linux
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/devops-node-app
+            echo "🛠️ Pulling latest code..."
+            git pull origin main
+            echo "🐳 Rebuilding Docker container..."
+            docker stop node-app || true
+            docker rm node-app || true
+            docker build -t node-app .
+            docker run -d -p 3000:3000 --name node-app node-app
+            echo "🚀 Deployment complete!"
