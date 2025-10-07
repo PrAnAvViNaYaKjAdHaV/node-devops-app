@@ -33,5 +33,23 @@ jobs:
         run: docker build -t devops-node-app .
 
       # 6️⃣ (Optional) Simulate deployment
-      - name: Simulate deployment
-        run: echo "🚀 Local Docker image built successfully!"
+      - name: Deploy to VM (Staging)
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{secrets.USER}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          port: 22
+          script: |
+            set -e 
+            if [ ! -d "devops-node-app" ]; then 
+               git clone https:/github.com/${{github.repository}}.git
+            fi 
+            cd devops-node-app
+            git pull origin main 
+            echo "Rebuilding Docker Container..."
+            docker stop node-app || true 
+            docker rm node-app || true 
+            docker build -t node-app . 
+            docker run -d -p 3000:3000 --name node-app node-app
+            echo "Deployment complete"
