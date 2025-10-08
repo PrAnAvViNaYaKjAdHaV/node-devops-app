@@ -17,19 +17,16 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
+            echo "📂 Switching to home directory..."
             cd /home/pranav || exit 1
 
-            if [ ! -d "devops-node-app/.git" ]; then
-              echo "📦 Cloning repository (first time)..."
-              rm -rf devops-node-app || true
-              git clone https://github.com/PrAnAvViNaYaKjAdHaV/node-devops-app.git
-            else
-              echo "🔄 Repository exists, pulling latest changes..."
-              cd devops-node-app
-              git reset --hard
-              git pull origin main
-              cd ..
+            if [ -d "devops-node-app" ]; then
+              echo "🧹 Cleaning up existing repo directory..."
+              sudo rm -rf /home/pranav/devops-node-app
             fi
+
+            echo "📦 Cloning repository..."
+            git clone https://github.com/PrAnAvViNaYaKjAdHaV/node-devops-app.git /home/pranav/devops-node-app
 
             echo "🐳 Rebuilding Docker container..."
             cd /home/pranav/devops-node-app || exit 1
