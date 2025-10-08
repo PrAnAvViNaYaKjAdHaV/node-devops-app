@@ -17,7 +17,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-            cd ~/devops-node-app || git clone https://github.com/PrAnAvViNaYaKjAdHaV/node-devops-app.git && cd devops-node-app
+            cd /home/pranav || exit 1
+            if [ ! -d "devops-node-app" ]; then
+              git clone https://github.com/PrAnAvViNaYaKjAdHaV/node-devops-app.git
+            fi
+            cd devops-node-app
             git pull origin main
             sudo docker stop node-app || true
             sudo docker rm node-app || true
