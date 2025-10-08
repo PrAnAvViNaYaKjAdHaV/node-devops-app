@@ -30,9 +30,9 @@ jobs:
 
             echo "🐳 Rebuilding Docker container..."
             cd /home/pranav/devops-node-app || exit 1
-            sudo docker stop node-app || true
-            sudo docker rm node-app || true
-            sudo docker build -t node-app .
-            sudo docker run -d -p 3000:3000 --name node-app node-app
+             docker stop node-app || true
+             docker rm node-app || true
+             docker build -t node-app .
+             docker run -d -p 3000:3000 --name node-app node-app
 
             echo "✅ Deployment complete!"
