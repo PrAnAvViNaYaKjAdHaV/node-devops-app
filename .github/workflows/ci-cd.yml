@@ -19,11 +19,20 @@ jobs:
             set -e
             cd /home/pranav || exit 1
             if [ ! -d "devops-node-app" ]; then
+              echo "📦 Cloning repository..."
               git clone https://github.com/PrAnAvViNaYaKjAdHaV/node-devops-app.git
             fi
-            cd devops-node-app
+
+            echo "📂 Changing into project directory..."
+            cd /home/pranav/devops-node-app || { echo "❌ Failed to enter directory"; exit 1; }
+
+            echo "🔄 Pulling latest code..."
             git pull origin main
+
+            echo "🐳 Rebuilding Docker container..."
             sudo docker stop node-app || true
             sudo docker rm node-app || true
             sudo docker build -t node-app .
             sudo docker run -d -p 3000:3000 --name node-app node-app
+
+            echo "✅ Deployment complete!"
