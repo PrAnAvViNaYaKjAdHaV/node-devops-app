@@ -1,0 +1,52 @@
+name: CI/CD Piepline (AWS EC2)
+
+on:
+  push:
+     branches:
+          - main 
+
+jobs:
+   build-and-deploy:
+     runs-on: ubuntu-latest 
+
+     
+     steps:
+        - name: Checkout respository 
+          uses: actions/checkout@v4
+
+        - name: Setup Node.js 
+          uses: actions/setup-node@v4
+          with: node-version:"18"
+
+        - name: Install dependencies
+          run: npm install
+
+        - name: Run test 
+          run: echo "Tests passed"
+          
+        - name: Build Docker image 
+          run: docker build -t devops-node-app .
+
+        - name: Deploy to AWS EC2 
+          uses: appleboy/ssh-action@v1.0.0
+          with: 
+            host: ${{ secrete.HOST }}
+            username: ${{ secrete.USER }}
+            key: ${{ secrete.SSH_PRIVATE_KEY }}
+            port: 22 
+            script: |
+              if [ ! -d "node-devops-app" ]; then
+                git clone https://github.com/${{ github.repository }}.git 
+              fi 
+              cd node-devops-app 
+              git pull origin  main 
+              echo "🐳 Rebuilding Docker container..."
+              docker stop node-app || true 
+              docker rm node-app || true 
+              docker build -t node-app . 
+              docker run -d -p 3000:3000 --name node-app node-app
+              echo "🚀 Deployed successfully to AWS EC2!"
+
+
+
+              

@@ -1,38 +1,38 @@
-name: Deploy via SSH
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to Ubuntu VM
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.HOST }}
-          port: 14768
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e
-            echo "📂 Switching to home directory..."
-            cd /home/pranav || exit 1
-
-            if [ -d "devops-node-app" ]; then
-              echo "🧹 Cleaning up existing repo directory..."
-              sudo rm -rf /home/pranav/devops-node-app
-            fi
-
-            echo "📦 Cloning repository..."
-            git clone https://github.com/PrAnAvViNaYaKjAdHaV/node-devops-app.git /home/pranav/devops-node-app
-
-            echo "🐳 Rebuilding Docker container..."
-            cd /home/pranav/devops-node-app || exit 1
-             sudo docker stop node-app || true
-             sudo docker rm node-app || true
-             sudo docker build -t node-app .
-             sudo docker run -d -p 3000:3000 --name node-app node-app
-
-            echo "✅ Deployment complete!"
+# name: Deploy via SSH
+#
+# on:
+#   push:
+#     branches: [main]
+#
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Deploy to Ubuntu VM
+#         uses: appleboy/ssh-action@v1.0.0
+#         with:
+#           host: ${{ secrets.HOST }}
+#           port: 14768
+#           username: ${{ secrets.USER }}
+#           key: ${{ secrets.SSH_PRIVATE_KEY }}
+#           script: |
+#             set -e
+#             echo "📂 Switching to home directory..."
+#             cd /home/pranav || exit 1
+#
+#             if [ -d "devops-node-app" ]; then
+#               echo "🧹 Cleaning up existing repo directory..."
+#               sudo rm -rf /home/pranav/devops-node-app
+#             fi
+#
+#             echo "📦 Cloning repository..."
+#             git clone https://github.com/PrAnAvViNaYaKjAdHaV/node-devops-app.git /home/pranav/devops-node-app
+#
+#             echo "🐳 Rebuilding Docker container..."
+#             cd /home/pranav/devops-node-app || exit 1
+#              sudo docker stop node-app || true
+#              sudo docker rm node-app || true
+#              sudo docker build -t node-app .
+#              sudo docker run -d -p 3000:3000 --name node-app node-app
+#
+#             echo "✅ Deployment complete!"
